@@ -3,6 +3,7 @@ package com.myblogrestapi8.service.impl;
 import com.myblogrestapi8.entity.Post;
 import com.myblogrestapi8.exception.ResourceNotFoundException;
 import com.myblogrestapi8.payload.PostDto;
+import com.myblogrestapi8.payload.PostResponse;
 import com.myblogrestapi8.repository.PostRepository;
 import com.myblogrestapi8.service.PostService;
 import org.springframework.data.domain.Page;
@@ -33,14 +34,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 
        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?
                 Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Post> posts = postRepository.findAll(pageable);
         List<Post> contents = posts.getContent();
-        return contents.stream().map(post->mapToDto(post)).collect(Collectors.toList());
+
+        List<PostDto> postDtos = contents.stream().map(post->mapToDto(post)).collect(Collectors.toList());
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(postDtos);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setLast(posts.isLast());
+            return postResponse;
     }
 
     @Override

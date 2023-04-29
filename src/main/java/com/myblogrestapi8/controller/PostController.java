@@ -1,6 +1,7 @@
 package com.myblogrestapi8.controller;
 
 import com.myblogrestapi8.payload.PostDto;
+import com.myblogrestapi8.payload.PostResponse;
 import com.myblogrestapi8.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,10 @@ public class PostController {
     }
     //http://localhost:8080/api/posts?pageNo=0&pageSize=5&sortBy=title
     @GetMapping
-    public List<PostDto> getAllPosts(@RequestParam(value = "pageNo", defaultValue = "0" , required = false) int pageNo,
-                                     @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                     @RequestParam(value = "sortBy", defaultValue = "id", required = false)String sortBy,
-                                     @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    public PostResponse getAllPosts(@RequestParam(value = "pageNo", defaultValue = "0" , required = false) int pageNo,
+                                    @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                    @RequestParam(value = "sortBy", defaultValue = "id", required = false)String sortBy,
+                                    @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
                                      ){
        return postService.getAllPosts(pageNo,pageSize,sortBy,sortDir);
     }

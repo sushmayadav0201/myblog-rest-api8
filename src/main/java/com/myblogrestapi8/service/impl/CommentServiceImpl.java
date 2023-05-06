@@ -9,6 +9,9 @@ import com.myblogrestapi8.repository.PostRepository;
 import com.myblogrestapi8.service.CommentService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -28,16 +31,33 @@ public class CommentServiceImpl implements CommentService {
 
        Comment newComment = commentRepository.save(comment);
 
-      CommentDto dto = mapToDto(newComment);
+       CommentDto dto = mapToDto(newComment);
         return dto;
     }
 
+    @Override
+    public List<CommentDto> getCommentsByPostId(long postId) {
+
+        Post post = postRepository.findById(postId).orElseThrow(()->new ResourceNotFoundException("post","id",postId));
+
+       List<Comment> comments = commentRepository.findByPostId(postId);
+       return comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getCommentById(long postId, long commentId) {
+       Post post = postRepository.findById(postId).orElseThrow(()->new ResourceNotFoundException("post", "id", postId));
+
+       Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new ResourceNotFoundException("comment","id",commentId));
+        return mapToDto(comment);
+    }
     private CommentDto mapToDto(Comment newComment) {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(newComment.getId());
         commentDto.setName(newComment.getName());
         commentDto.setEmail(newComment.getEmail());
         commentDto.setBody(newComment.getBody());
+        commentDto.setPost(newComment.getPost());
         return commentDto;
     }
 

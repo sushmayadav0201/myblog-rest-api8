@@ -4,8 +4,10 @@ import com.myblogrestapi8.payload.CommentDto;
 import com.myblogrestapi8.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,9 +23,14 @@ public class CommentController {
 
     //http://localhost:8080/api/posts/1/comments
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommentDto> createComment
-            (@PathVariable("postId") Long PostId,
-             @RequestBody CommentDto commentDto){
+    public ResponseEntity<Object> createComment
+            (@Valid
+             @PathVariable("postId") Long PostId,
+             @RequestBody CommentDto commentDto, BindingResult result
+            ){
+        if (result.hasErrors()){
+            return new ResponseEntity<>(result.getFieldError().getDefaultMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         CommentDto dto = commentService.createComment(PostId,commentDto);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }

@@ -5,8 +5,10 @@ import com.myblogrestapi8.payload.PostResponse;
 import com.myblogrestapi8.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,7 +22,11 @@ public class PostController {
     }
    //http://localhost:8080/api/posts
     @PostMapping
-   public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto){
+   public ResponseEntity<Object> createPost(@Valid  @RequestBody PostDto postDto, BindingResult result){
+
+        if(result.hasErrors()){
+            return new ResponseEntity<>(result.getFieldError(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
        PostDto dto = postService.createPost(postDto);
        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }

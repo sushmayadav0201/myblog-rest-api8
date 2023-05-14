@@ -19,7 +19,7 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    //http://localhost:8080/api/auth/signin
     @PostMapping("/signin")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate((new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(),

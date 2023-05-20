@@ -1,21 +1,40 @@
 package com.myblogrestapi8;
 
+import com.myblogrestapi8.entity.Role;
+import com.myblogrestapi8.repository.RoleRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class MyblogRestApi8Application {
+public class MyblogRestApi8Application implements CommandLineRunner {
+
+	@Autowired
+	private RoleRepository roleRepository;
+
+	@Bean
+	public ModelMapper modelMapper(){
+
+		return new ModelMapper();
+	}
 
 	public static void main(String[] args) {
 
 		SpringApplication.run(MyblogRestApi8Application.class, args);
 	}
 
-	@Bean
-	public ModelMapper modelMapper(){
-		return new ModelMapper();
-	}
+	@Override
+	public void run(String... args) throws Exception {
 
+		Role adminRole = new Role();
+		adminRole.setName("ROLE_ADMIN");
+		roleRepository.save(adminRole);
+
+		Role userRole = new Role();
+		userRole.setName("ROLE_USER");
+		roleRepository.save(userRole);
+	}
 }
